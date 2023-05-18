@@ -30,7 +30,8 @@ import numpy as np
 
 ```python
 def euclidean_distance(p1, p2):
-    # Your code here
+    p1, p2 = np.array(p1), np.array(p2) # Ensure p1 and p2 are NumPy arrays
+    return np.sqrt(np.sum(np.square(p2 - p1)))
 ```
 
 ## Average Distance From the Origin
@@ -47,7 +48,17 @@ sns.set_style('darkgrid')
 
 
 ```python
-# Your code here
+avg_distances = []
+for n in range(1, 1001):
+    p1 = np.random.uniform(low=-10, high=10, size=n)
+    p2 = [0 for i in range(n)]
+    distance = np.mean([euclidean_distance(p1 ,p2) for p in range(100)])
+    avg_distances.append(distance)
+plt.figure(figsize=(10, 10))
+plt.plot(range(1, 1001), avg_distances)
+plt.xlabel('Number of Dimensions')
+plt.ylabel('Average Distance to Origin')
+plt.title('Investigating Sparseness and the Curse of Dimensionality');
 ```
 
 ## Convergence Time
@@ -63,14 +74,42 @@ from sklearn.linear_model import LinearRegression, Lasso
 
 
 ```python
-# ⏰ Your code may take some time to run 
+# ⏰ This code will take some time to run 
+ols = LinearRegression()
+
+sample_size = 10**3
+times = []
+for n in range(1,1001):
+    xi = [np.random.uniform(low=-10, high=10, size=n) for i in range(sample_size)]
+    coeff = np.array(range(1, n+1))
+    yi = np.sum(coeff*xi, axis=1) + np.random.normal(loc=0, scale=.1, size=sample_size)
+    ols = LinearRegression()
+    start = datetime.datetime.now()
+    ols.fit(xi, yi)
+    end = datetime.datetime.now()
+    elapsed = end - start
+    times.append(elapsed)
+plt.plot(range(1,1001), [t.microseconds for t in times]);
 ```
 
 - Repeat the same experiment for a Lasso penalized regression model
 
 
 ```python
-# ⏰ Your code may take some time to run 
+# ⏰ This code will take some time to run 
+sample_size = 10**3
+times = []
+for n in range(1, 1001):
+    xi = [np.random.uniform(low=-10, high=10, size=n) for i in range(sample_size)]
+    coeff = np.array(range(1, n + 1))
+    yi = np.sum(coeff*xi, axis=1) + np.random.normal(loc=0, scale=0.1, size=sample_size)
+    lasso = Lasso()
+    start = datetime.datetime.now()
+    lasso.fit(xi, yi)
+    end = datetime.datetime.now()
+    elapsed = end - start
+    times.append(elapsed)
+plt.plot(range(1, 1001), [t.microseconds for t in times]);
 ```
 
 ## Optional (Level Up)
@@ -83,7 +122,20 @@ _Note:_ ⏰ _You can expect your code to take over an hour to run on a 2.7 GHz s
 
 
 ```python
-# ⏰ Your code may take some time to run 
+# ⏰ This code will take some time to run
+sample_size = 10**3
+times = []
+for n in range(1, 10001):
+    xi = [np.random.uniform(low=-10, high=10, size=n) for i in range(sample_size)]
+    coeff = np.array(range(1, n + 1))
+    yi = np.sum(coeff*xi, axis=1) + np.random.normal(loc=0, scale=0.1, size=sample_size)
+    lasso = Lasso()
+    start = datetime.datetime.now()
+    lasso.fit(xi, yi)
+    end = datetime.datetime.now()
+    elapsed = end - start
+    times.append(elapsed)
+plt.plot(range(1, 10001), [t.microseconds for t in times]);
 ```
 
 ## Summary
